@@ -14,5 +14,5 @@ type TypedResponse<T> = Omit<Response, 'json' | 'status'> & {
 type AppResponse = TypedResponse<JSONResponse>;
 
 declare global {
-  type Controller = (req: Request, res: AppResponse, next: NextFunction) => Promise<void>;
+  type Controller = (req: any, res: AppResponse, next: NextFunction) => Promise<AppResponse>;
 }

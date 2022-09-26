@@ -1,14 +1,60 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import db from './db';
+import http from 'http';
 import router from './routes';
+import cors from 'cors';
+import { Server } from 'socket.io';
+import Message from './models/message';
 
 const app: Express = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+io.on('connection', (socket) => {
+  socket.on("chat message", async (msg, senderId, name) => {
+    const data = new Message({
+      senderId: senderId,
+      message: msg,
+      active: true
+    })
+    const res = await data.save();
+
+    const newBroadcast = {
+      _id: res._id,
+      message: res.message,
+      createdAt: res.createdAt,
+      sender: {
+        name: name
+      },
+      reactions: []
+    }
+    console.log(newBroadcast);
+    io.emit("chat message", { newBroadcast: newBroadcast });
+})});
+
+server.listen(8000, () => {
+  console.log('ws server is running on port 8000');
+});
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  })
+)
 
 const start = async () => {
   await db.connect();
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 8080;
 
+
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
   app.use('/', router);
 
   app.use((err:Error, req:Request, res:Response, next:NextFunction) => {
