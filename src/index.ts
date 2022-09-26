@@ -35,13 +35,15 @@ io.on('connection', (socket) => {
       },
       reactions: []
     }
-    console.log(newBroadcast);
+    // console.log(newBroadcast);
     io.emit("chat message", { newBroadcast: newBroadcast });
 })});
 
-server.listen(8000, () => {
-  console.log('ws server is running on port 8000');
-});
+// const PORT2 = process.env.PORT2 || 8000;
+
+// server.listen(8000, () => {
+//   console.log('ws server is running on port 8000');
+// });
 
 app.use(
   cors({
@@ -65,7 +67,7 @@ const start = async () => {
     res.status(500).json({ error: true, message: 'Internal Server Error' });
   });
 
-  app.listen(PORT, function () {
+  server.listen(PORT, function () {
     console.log('server started on port ' + PORT);
   });
 }
