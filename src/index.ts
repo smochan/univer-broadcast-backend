@@ -6,6 +6,8 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import Message from './models/message';
 
+import { adminJs, router as adminJsRouter } from './adminjs';
+
 const app: Express = express();
 const server = http.createServer(app);
 
@@ -43,12 +45,13 @@ server.listen(8000, () => {
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: '*',
   })
 )
 
 const start = async () => {
   await db.connect();
+  app.use(adminJs.options.rootPath, adminJsRouter);
 
   const PORT = process.env.PORT || 8080;
 
