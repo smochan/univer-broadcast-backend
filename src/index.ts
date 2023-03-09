@@ -37,7 +37,14 @@ io.on('connection', (socket) => {
     }
     // console.log(newBroadcast);
     io.emit("chat message", { newBroadcast: newBroadcast });
-})});
+  });
+  socket.on("reply message", async (msg) => {
+    // console.log(msg);
+    io.emit("reply message", { reply: msg });
+  })
+
+
+});
 
 // const PORT2 = process.env.PORT2 || 8000;
 
